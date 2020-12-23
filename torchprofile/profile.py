@@ -9,7 +9,7 @@ __all__ = ['profile_macs']
 def profile_macs(model, args=(), kwargs=None, reduction=sum):
     results = dict()
 
-    graph = trace(model, args, kwargs)
+    graph, model_output = trace(model, args, kwargs)
     for node in graph.nodes:
         for operators, func in handlers:
             if isinstance(operators, str):
@@ -19,10 +19,11 @@ def profile_macs(model, args=(), kwargs=None, reduction=sum):
                     results[node] = func(node)
                 break
         else:
-            warnings.warn('No handlers found: "{}". Skipped.'.format(
-                node.operator))
+            # warnings.warn('No handlers found: "{}". Skipped.'.format(
+            #     node.operator))
+            pass
 
     if reduction is not None:
-        return reduction(results.values())
+        return reduction(results.values()), model_output
     else:
-        return results
+        return results, model_output

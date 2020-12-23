@@ -14,7 +14,7 @@ def trace(model, args=(), kwargs=None):
                            'Please use positional arguments instead!'
 
     with warnings.catch_warnings(record=True):
-        graph, _ = torch.jit._get_trace_graph(Flatten(model), args, kwargs)
+        graph, model_output = torch.jit._get_trace_graph(Flatten(model), args, kwargs)
 
     variables = dict()
     for x in graph.nodes():
@@ -54,4 +54,4 @@ def trace(model, args=(), kwargs=None):
         outputs=[variables[v] for v in graph.outputs() if v in variables],
         nodes=nodes,
     )
-    return graph
+    return graph, model_output
